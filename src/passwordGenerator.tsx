@@ -1,0 +1,230 @@
+import React, { useState, ChangeEvent } from "react";
+import { Button, Card, Container, Form, InputGroup } from "react-bootstrap";
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import passwordUtils from "./utils/passwordUtils";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import zxcvbn, { ZXCVBNResult } from 'zxcvbn'
+import ProgressBar from 'react-bootstrap/ProgressBar';
+
+ const PasswordGenerator: React.FC = () => {
+  const [password, setPassword] = useState('');
+  const [passwordLength, setPasswordLength] = useState(12);
+  const [useSpecialChars, setUseSpecialChars] = useState(true);
+  const [useUppercase, setUseUppercase] = useState(true);
+  const [getUseLowercase, setUseLowercase] = useState(true);
+  const [useNumbers, setUseNumbers] = useState(true);
+  const [passwordVisibility, setPasswordVisibility] = useState(false);
+  const [passwordScore, setPasswordScore] = useState(0);
+  const [result, setResult] = useState<ZXCVBNResult>();
+  const [error, setError] = useState("");
+  const [customSpecialChars, setCustomSpecialChars] = useState('');
+
+  const handlePasswordGeneration = () => {
+    const generatedPassword: string = passwordUtils.generatePassword({
+      length: passwordLength,
+      useSpecialChars: useSpecialChars,
+      useUppercase: useUppercase,
+      useLowercase:getUseLowercase,
+      useNumbers: useNumbers 
+    }, customSpecialChars);
+     
+    setPassword(generatedPassword);
+    const result = zxcvbn(generatedPassword);
+    setPasswordScore(result.score);
+    setResult(result);
+
+    checkAllOptionsUnchecked();
+  };
+
+  const getProgressColor = () => {
+    if (passwordScore === 0) {
+      return 'pass-weak-color';
+    }
+    return ''
+  }
+  const handlePasswordCopy = () => {
+    navigator.clipboard.writeText(password).then(() => {
+        alert(`"successfully copied: ${password} to clipboard"`);
+      })
+      .catch(() => {
+        alert("something went wrong whilst trying to copy from clipboard");
+      });
+  };
+
+  const downloadPassword = () => {
+    const element = document.createElement("a");
+    const file = new Blob([password], { type: "text/plain" });
+    element.href = URL.createObjectURL(file);
+    element.download = "myPassword.txt";
+    document.body.appendChild(element);
+    element.click();
+  };
+
+  const canDownload = ():boolean => {
+    if(password !== '' && password !== undefined && password !== null){
+      downloadPassword();
+      return true;
+    }
+    else{
+      setError("You can not download empty passwords. Please generate one");
+      return false;
+    }
+  }
+  
+
+  const handlePasswordLengthChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const newLength: number = parseInt(e.target.value, 10);
+    if (!isNaN(newLength)) {
+      setPasswordLength(newLength);
+    }
+  };
+
+  const handleSpecialCharsChange = () => {
+    setUseSpecialChars(!useSpecialChars);
+  };
+
+  const handleUppercaseChange = () => {
+    setUseUppercase(!useUppercase);
+  };
+
+  const handleLowerCaseChange = () => {
+    setUseLowercase(!getUseLowercase);
+  };
+
+  const handleNumbersChange = () => {
+    setUseNumbers(!useNumbers);
+  };
+
+  const reset = () => {
+    setPassword('')
+  }
+
+  const checkAllOptionsUnchecked = () => {
+    if (!getUseLowercase && !useUppercase && !useNumbers && !useSpecialChars) {
+      setError("Please select at least one option for generating the password.");
+      setPassword("");
+      return;
+    }
+    else{
+      setError("")
+    }
+  };
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisibility(!passwordVisibility);
+  };
+
+  return (
+    <Container>
+      <Row>
+        <Col xs={12} sm={8} md={6} lg={4}>
+        <Card bg="black" text="white">
+          <Card.Body>
+              <InputGroup className="mb-3">
+                <Form.Label htmlFor="password-area"></Form.Label>
+                <Form.Control
+                  type={passwordVisibility ? "text" : "password"}
+                  name="password-area"
+                  placeholder="Password"
+                  aria-label="Password"
+                  value={password}
+                  readOnly
+                >              
+                </Form.Control>
+                <Button variant="light" onClick={togglePasswordVisibility}>
+                     <FontAwesomeIcon icon={passwordVisibility ? faEye : faEyeSlash} />
+                   </Button>
+                <Button variant="outline-primary" onClick={handlePasswordCopy}>
+                  Copy
+                </Button>
+              </InputGroup>
+              {error && <div style={{ color: "red" }}>{error}</div>}
+              <Form>
+                <Form.Group>
+                  <Form.Label>Password length:</Form.Label>
+                  <Form.Control
+                    type="number"
+                    min={3}
+                    max={32}
+                    value={passwordLength}
+                    onChange={handlePasswordLengthChange}
+                  />
+                </Form.Group>
+                <Form.Group style={{marginTop:15 + 'px'}}>
+                  <Form.Check
+                    type="checkbox"
+                    checked={useSpecialChars}
+                    onChange={handleSpecialCharsChange}
+                    label="Include special characters"
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Check
+                    type="checkbox"
+                    checked={useUppercase}
+                    onChange={handleUppercaseChange}
+                    label="Include uppercase characters"
+                  />
+                </Form.Group>
+
+                <Form.Group>
+                  <Form.Check
+                    type="checkbox"
+                    checked={getUseLowercase}
+                    onChange={handleLowerCaseChange}
+                    label="Include lowercase characters"
+                  />
+                </Form.Group>
+
+                <Form.Group>
+                <Form.Check
+                  type="checkbox"
+                  checked={useNumbers}
+                  onChange={handleNumbersChange}
+                  label="Include numbers"
+                  />
+                </Form.Group>
+              </Form>           
+                     
+              <Form.Label htmlFor="special-chars">Enter special characters to use:</Form.Label>             
+              
+              <Form.Control type="text" name="special-chars" value={customSpecialChars} onChange={(e) => setCustomSpecialChars(e.target.value)} />             
+                   
+              <ProgressBar id="progress-bar" style={{marginTop:15 + 'px'}} now={passwordScore * 25} className={getProgressColor()} />
+              <small>{`Password Strength: ${passwordScore} / 4`}</small>             
+
+              {result && (
+              <ul>
+                <li>Crack time: {result.crack_times_display.online_no_throttling_10_per_second}</li>
+              </ul>
+            )}                             
+             
+        </Card.Body>
+        <Card.Footer>
+        <div>             
+            <p>
+              <small>Password strength is calculated using zxcvbn, which is a password strength estimator inspired by password crackers. 
+                More information on zxcvbn can be found 
+                <a href="https://github.com/dropbox/zxcvbn"><u> here</u></a>
+              </small>
+              </p>
+          </div>        
+          <div className="center">           
+              <Button className="btn-child" variant="primary" onClick={handlePasswordGeneration}>
+                Generate password
+              </Button>
+              <Button className="btn btn-primary btn-child" id="reset" onClick={reset}>Reset Password</Button>
+              <Button className="btn btn-primary btn-child" id="download-btn" onClick={canDownload}>Download Password</Button>              
+          </div>
+        </Card.Footer>
+    </Card>
+    </Col>
+  </Row>
+</Container>
+  
+   );
+};
+
+export default PasswordGenerator;
