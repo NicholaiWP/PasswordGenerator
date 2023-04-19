@@ -22,13 +22,14 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
   const [customSpecialChars, setCustomSpecialChars] = useState('');
 
   const handlePasswordGeneration = () => {
-    const generatedPassword: string = passwordUtils.generatePassword({
-      length: passwordLength,
-      useSpecialChars: useSpecialChars,
-      useUppercase: useUppercase,
-      useLowercase:getUseLowercase,
-      useNumbers: useNumbers 
-    }, customSpecialChars);
+    const generatedPassword: string = passwordUtils.generatePassword(
+      {
+        length: passwordLength,
+        useSpecialChars: useSpecialChars,
+        useUppercase: useUppercase,
+        useLowercase:getUseLowercase,
+        useNumbers: useNumbers 
+      }, customSpecialChars);
      
     setPassword(generatedPassword);
     const result = zxcvbn(generatedPassword);
@@ -42,7 +43,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
     if (passwordScore === 0) {
       return 'pass-weak-color';
     }
-    return ''
+    return '';
   }
   const handlePasswordCopy = () => {
     navigator.clipboard.writeText(password).then(() => {
@@ -115,6 +116,21 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
   const togglePasswordVisibility = () => {
     setPasswordVisibility(!passwordVisibility);
   };
+
+  const handleSpecialCharsInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const allowedChars = '-_+=!@#$%^&*()[]{}|;:,.<>?/';
+    const inputValue = event.target.value;
+  
+    for (let i = 0; i < inputValue.length; i++) {
+      if (!allowedChars.includes(inputValue[i])) {
+        setError('Invalid characters entered!');
+        return;
+      }
+    }
+    setError('');
+    setCustomSpecialChars(inputValue);
+  };
+  
 
   return (
     <Container>
@@ -190,7 +206,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
                      
               <Form.Label htmlFor="special-chars">Enter special characters to use:</Form.Label>             
               
-              <Form.Control type="text" name="special-chars" value={customSpecialChars} onChange={(e) => setCustomSpecialChars(e.target.value)} />             
+              <Form.Control type="text" name="special-chars" value={customSpecialChars} onChange={handleSpecialCharsInputChange} />             
                    
               <ProgressBar id="progress-bar" style={{marginTop:15 + 'px'}} now={passwordScore * 25} className={getProgressColor()} />
               <small>{`Password Strength: ${passwordScore} / 4`}</small>             

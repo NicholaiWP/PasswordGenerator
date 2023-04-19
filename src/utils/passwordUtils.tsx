@@ -13,20 +13,14 @@ const passwordUtils = {
     const lowercaseChars = useLowercase ? 'abcdefghijklmnopqrstuvwxyz':'';
     const uppercaseChars = useUppercase ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' : '';
     const numberChars = useNumbers ? '0123456789' : '';
-    const specialChars = useSpecialChars ? '%$#@!^&*()_+-={}[]:"|;\'<>,.?/~`': '';
+    const specialChars = useSpecialChars ? '-_+=!@#$%^&*()[]{}|;:,.<>?/': '';
 
     const availableChars = lowercaseChars + uppercaseChars + numberChars + (customSpecialChars ? customSpecialChars : specialChars);
 
-    let password = '';
-   
-    for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * availableChars.length);
-      password += availableChars[randomIndex];
-        
-      }
-        return password;
-    }
+    const password = Array.from({ length }, () => availableChars[Math.floor(Math.random() * availableChars.length)]).join('');
     
-  } 
+    return password;
+  }
+}
 
 export default passwordUtils;
