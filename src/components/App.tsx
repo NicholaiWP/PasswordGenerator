@@ -1,6 +1,6 @@
-import './App.css';
+import '../styles/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import PasswordGenerator from './passwordGenerator';
+import PasswordGenerator from './passwordGenerator'
 
 function App() {
   return (

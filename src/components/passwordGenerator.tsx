@@ -2,13 +2,13 @@ import React, { useState, ChangeEvent } from "react";
 import { Button, Card, Container, Form, InputGroup } from "react-bootstrap";
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import passwordUtils from "./utils/passwordUtils";
+import passwordUtils from '../components/passwordUtils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import zxcvbn, { ZXCVBNResult } from 'zxcvbn'
 import ProgressBar from 'react-bootstrap/ProgressBar';
 
- const PasswordGenerator: React.FC = () => {
+ const PasswordGenerator = () => {
   const [password, setPassword] = useState('');
   const [passwordLength, setPasswordLength] = useState(12);
   const [useSpecialChars, setUseSpecialChars] = useState(true);
@@ -32,12 +32,15 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
       }, customSpecialChars);
      
     setPassword(generatedPassword);
-    const result = zxcvbn(generatedPassword);
-    setPasswordScore(result.score);
-    setResult(result);
-
+    handleScore(generatedPassword);
     checkAllOptionsUnchecked();
   };
+
+  function handleScore(password:string){
+    const result = zxcvbn(password);
+    setPasswordScore(result.score);
+    setResult(result);
+  }
 
   const getProgressColor = () => {
     if (passwordScore === 0) {
@@ -98,7 +101,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
     setUseNumbers(!useNumbers);
   };
 
-  const reset = () => {
+  const resetPassword = () => {
     setPassword('')
   }
 
@@ -143,7 +146,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
                 <Form.Control
                   type={passwordVisibility ? "text" : "password"}
                   name="password-area"
-                  placeholder="Password"
+                  placeholder="Generated password displayed here"
                   aria-label="Password"
                   value={password}
                   readOnly
@@ -161,8 +164,8 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
                 <Form.Group>
                   <Form.Label>Password length:</Form.Label>
                   <Form.Control
-                    type="number"
-                    min={3}
+                    type="number"                                 
+                    min={0}
                     max={32}
                     value={passwordLength}
                     onChange={handlePasswordLengthChange}
@@ -204,9 +207,9 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
                 </Form.Group>
               </Form>           
                      
-              <Form.Label htmlFor="special-chars">Enter special characters to use:</Form.Label>             
+              <Form.Label htmlFor="special-chars">Enter special characters to use in password:</Form.Label>             
               
-              <Form.Control type="text" name="special-chars" value={customSpecialChars} onChange={handleSpecialCharsInputChange} />             
+              <Form.Control type="text" name="special-chars" placeholder="Special characters to include" value={customSpecialChars} onChange={handleSpecialCharsInputChange} />             
                    
               <ProgressBar id="progress-bar" style={{marginTop:15 + 'px'}} now={passwordScore * 25} className={getProgressColor()} />
               <small>{`Password Strength: ${passwordScore} / 4`}</small>             
@@ -231,7 +234,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
               <Button className="btn-child" variant="primary" onClick={handlePasswordGeneration}>
                 Generate password
               </Button>
-              <Button className="btn btn-primary btn-child" id="reset" onClick={reset}>Reset Password</Button>
+              <Button className="btn btn-primary btn-child" id="reset" onClick={resetPassword}>Reset Password</Button>
               <Button className="btn btn-primary btn-child" id="download-btn" onClick={canDownload}>Download Password</Button>              
           </div>
         </Card.Footer>
