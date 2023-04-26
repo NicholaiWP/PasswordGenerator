@@ -1,28 +1,33 @@
-import React, { useState, ChangeEvent, useEffect } from "react";
-import { Button, Card, Container, Form, InputGroup } from "react-bootstrap";
+import React, { useState, ChangeEvent, useEffect, KeyboardEventHandler } from "react";
+import { Button, Card, Container, Form, InputGroup} from "react-bootstrap";
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import passwordUtils from '../components/passwordUtils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash, faL } from '@fortawesome/free-solid-svg-icons';
 import zxcvbn, { ZXCVBNResult } from 'zxcvbn'
 import ProgressBar from 'react-bootstrap/ProgressBar';
 
  const PasswordGenerator = () => {
-  const [password, setPassword] = useState('');
-  const [passwordLength, setPasswordLength] = useState(12);
-  const [useSpecialChars, setUseSpecialChars] = useState(true);
-  const [useUppercase, setUseUppercase] = useState(true);
-  const [getUseLowercase, setUseLowercase] = useState(true);
-  const [useNumbers, setUseNumbers] = useState(true);
-  const [passwordVisibility, setPasswordVisibility] = useState(false);
-  const [passwordScore, setPasswordScore] = useState(0);
+  const [password, setPassword] = useState<string>('');
+  const [passwordLength, setPasswordLength] = useState<number>(12);
+  const [useSpecialChars, setUseSpecialChars] = useState<boolean>(true);
+  const [useUppercase, setUseUppercase] = useState<boolean>(true);
+  const [getUseLowercase, setUseLowercase] = useState<boolean>(true);
+  const [useNumbers, setUseNumbers] = useState<boolean>(true);
+  const [passwordVisibility, setPasswordVisibility] = useState<boolean>(true);
+  const [passwordScore, setPasswordScore] = useState<number>(0);
   const [result, setResult] = useState<ZXCVBNResult>();
-  const [error, setError] = useState("");
-  const [customSpecialChars, setCustomSpecialChars] = useState('');
+  const [error, setError] = useState<string>("");
+  const [customSpecialChars, setCustomSpecialChars] = useState<string>('');
+  const [customAlert, setCustomAlert] = useState<Boolean>(false);
 
   useEffect(() => {
     handleScore(password)
+    let alertTimer = setTimeout(() => {setCustomAlert(false)}, 1500);
+    return () => {
+      clearTimeout(alertTimer);
+    }
   }, [password])
 
   const handlePasswordGeneration = () => {
@@ -36,6 +41,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
       }, customSpecialChars);
      
     setPassword(generatedPassword);
+    setCustomAlert(true);
     handleScore(generatedPassword);
     checkAllOptionsUnchecked();
   };
@@ -143,13 +149,28 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
     setError('');
     setCustomSpecialChars(inputValue);
   };
-  
 
+  const handlePasswordLengthInput = (e: React.FormEvent<HTMLInputElement>) => {
+    const maxLength = 32;
+    const minLength = 0;
+    const currentValue = parseInt(e.currentTarget.value, 10);
+  
+    if (currentValue > maxLength) {
+      e.currentTarget.value = maxLength.toString();
+    }
+    else if(currentValue < minLength){
+        e.currentTarget.value = minLength.toString();
+    }
+  }
+  
   return (
     <Container className="vh-100 px-0" fluid={true}>
       <Row className="vh-100 px-0">
         <Col id="card-col" xs={12} sm={8} md={6} lg={4}>
         <Card bg="black" text="white">
+          <Card.Header>
+          {customAlert && <div><p style={{color:'#0d6efd'}}>A new password has been generated!</p></div>}
+          </Card.Header>
           <Card.Body>
               <InputGroup className="mb-3">
                 <Form.Label htmlFor="password-area"></Form.Label>
@@ -168,7 +189,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
                 <Button variant="outline-primary" onClick={handlePasswordCopy}>
                   Copy
                 </Button>
-              </InputGroup>
+              </InputGroup>             
               {error && <div style={{ color: "red" }}>{error}</div>}
               <Form>
                 <Form.Group>
@@ -177,6 +198,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
                     type="number"                                 
                     min={0}
                     max={32}
+                    onInput={handlePasswordLengthInput}
                     value={passwordLength}
                     onChange={handlePasswordLengthChange}
                   />
@@ -228,7 +250,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
               <ul>
                 <li>Crack time: {result.crack_times_display.online_no_throttling_10_per_second}</li>
               </ul>
-            )}                             
+            )}                           
              
         </Card.Body>
         <Card.Footer>
@@ -252,7 +274,6 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
     </Col>
   </Row>
 </Container>
-  
    );
 };
 
