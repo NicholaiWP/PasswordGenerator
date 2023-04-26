@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import { Button, Card, Container, Form, InputGroup } from "react-bootstrap";
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -21,6 +21,10 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
   const [error, setError] = useState("");
   const [customSpecialChars, setCustomSpecialChars] = useState('');
 
+  useEffect(() => {
+    handleScore(password)
+  }, [password])
+
   const handlePasswordGeneration = () => {
     const generatedPassword: string = passwordUtils.generatePassword(
       {
@@ -36,9 +40,9 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
     checkAllOptionsUnchecked();
   };
 
-  function handleScore(password:string){
-    const result = zxcvbn(password);
-    setPasswordScore(result.score);
+  function handleScore(password: string) {
+    const result = password ? zxcvbn(password) : undefined;
+    setPasswordScore(result?.score || 0);
     setResult(result);
   }
 
@@ -108,7 +112,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
   };
 
   const resetPassword = () => {
-    setPassword('')
+    setPassword('');
   }
 
   const checkAllOptionsUnchecked = () => {
