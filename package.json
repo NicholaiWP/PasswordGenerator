@@ -1,5 +1,6 @@
 {
   "name": "passwordgenerator",
+  "homepage": "https://nicholaiwp.github.io/PasswordGenerator/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
