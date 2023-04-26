@@ -1,8 +1,6 @@
-.container .row{
-  margin-top:20px;
-  height:40vw;
-  display: grid;
-  place-items: center;
+.row{
+  justify-content: center;
+  align-items: center;
 }
 
 .pass-weak-color {

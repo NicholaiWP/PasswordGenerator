@@ -142,9 +142,9 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
   
 
   return (
-    <Container>
-      <Row>
-        <Col xs={12} sm={8} md={6} lg={4}>
+    <Container className="vh-100 px-0" fluid={true}>
+      <Row className="vh-100 px-0">
+        <Col id="card-col" xs={12} sm={8} md={6} lg={4}>
         <Card bg="black" text="white">
           <Card.Body>
               <InputGroup className="mb-3">
