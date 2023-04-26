@@ -62,6 +62,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
     const file = new Blob([password], { type: "text/plain" });
     element.href = URL.createObjectURL(file);
     element.download = "myPassword.txt";
+    element.target = "_blank"; 
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element); // remove the element after download is completed
