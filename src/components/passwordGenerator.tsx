@@ -64,18 +64,23 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
     element.download = "myPassword.txt";
     document.body.appendChild(element);
     element.click();
+    document.body.removeChild(element); // remove the element after download is completed
   };
-
+  
   const canDownload = ():boolean => {
     if(password !== '' && password !== undefined && password !== null){
-      downloadPassword();
+      if(navigator.userAgent.match(/(iPad|iPhone|iPod|Android)/)) { // check if the device is a mobile device
+        window.open(`data:text/plain;charset=utf-8,${encodeURIComponent(password)}`, '_blank'); // open the download in a new window
+      } else {
+        downloadPassword(); // download the password normally
+      }
       return true;
     }
     else{
       setError("You can not download empty passwords. Please generate one");
       return false;
     }
-  }
+  }  
   
 
   const handlePasswordLengthChange = (e: ChangeEvent<HTMLInputElement>) => {
