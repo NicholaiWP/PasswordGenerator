@@ -1,1 +1,5 @@
-This project was created using Create React App and uses the https://github.com/dropbox/zxcvbn library to determine password strength.Zxcvbn is a Low-Budget Password Strength Estimation tool
+# Password Generator
+
+This project was created using Create React App and uses https://github.com/dropbox/zxcvbn to determine password strength (Zxcvbn is a Low-Budget Password Strength Estimation tool)
+
+[Link to a working demo](https://nicholaiwp.github.io/PasswordGenerator)
