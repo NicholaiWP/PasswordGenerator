@@ -20,14 +20,9 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
   const [result, setResult] = useState<ZXCVBNResult>();
   const [error, setError] = useState<string>("");
   const [customSpecialChars, setCustomSpecialChars] = useState<string>('');
-  const [customAlert, setCustomAlert] = useState<Boolean>(false);
 
   useEffect(() => {
-    handleScore(password)
-    let alertTimer = setTimeout(() => {setCustomAlert(false)}, 1500);
-    return () => {
-      clearTimeout(alertTimer);
-    }
+    handleScore(password)  
   }, [password])
 
   const handlePasswordGeneration = () => {
@@ -41,7 +36,6 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
       }, customSpecialChars);
      
     setPassword(generatedPassword);
-    setCustomAlert(true);
     handleScore(generatedPassword);
     checkAllOptionsUnchecked();
   };
@@ -169,7 +163,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
         <Col id="card-col" xs={12} sm={8} md={6} lg={4}>
         <Card bg="black" text="white">
           <Card.Header>
-          {customAlert && <div><p style={{color:'#0d6efd'}}>A new password has been generated!</p></div>}
+           
           </Card.Header>
           <Card.Body>
               <InputGroup className="mb-3">
