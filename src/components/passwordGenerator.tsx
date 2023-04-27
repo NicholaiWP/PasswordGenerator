@@ -79,44 +79,30 @@ import CustomToast from '../components/Toast';
   };
 
   const downloadPassword = () => {
+    const element = document.createElement("a");
     const file = new Blob([password], { type: "text/plain" });
-    const fileURL = URL.createObjectURL(file);
-  
-    // Share the file using the Web Share API if it's available
-    if (navigator.share) {
-      navigator
-        .share({
-          title: "My Password",
-          text: "Here's your password file",
-          url: fileURL,
-        })
-        .then(() => console.log("File shared successfully."))
-        .catch((error) => console.error("Error sharing file:", error));
-    } else {
-      // Otherwise, download the file normally
-      const element = document.createElement("a");
-      element.href = fileURL;
-      element.download = "myPassword.txt";
-      element.target = "_blank";
-      document.body.appendChild(element);
-      element.click();
-      document.body.removeChild(element);
-    }
+    element.href = URL.createObjectURL(file);
+    element.download = "myPassword.txt";
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element); // remove the element after download is completed
   };
   
   const canDownload = ():boolean => {
     if(password !== '' && password !== undefined && password !== null){
-      downloadPassword();
+      if(navigator.userAgent.match(/(iPad|iPhone|iPod|Android)/)) { // check if the device is a mobile device
+        window.open(`data:text/plain;charset=utf-8,${encodeURIComponent(password)}`, '_blank'); // open the download in a new window
+      } else {
+        downloadPassword(); // download the password normally
+      }
       return true;
     }
     else{
       setError("You can not download empty passwords. Please generate one");
       return false;
     }
-  };
-  
-  
-  
+  }  
+   
 
   const handlePasswordLengthChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newLength: number = parseInt(e.target.value, 10);
