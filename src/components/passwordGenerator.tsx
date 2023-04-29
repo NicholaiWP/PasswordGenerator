@@ -8,6 +8,8 @@ import { faEye, faEyeSlash, faL } from '@fortawesome/free-solid-svg-icons';
 import zxcvbn, { ZXCVBNResult } from 'zxcvbn'
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import CustomToast from '../components/Toast';
+import Holder from 'holderjs';
+
 
  const PasswordGenerator = () => {
   const [password, setPassword] = useState<string>('');
@@ -27,6 +29,10 @@ import CustomToast from '../components/Toast';
   useEffect(() => {
     handleScore(password)  
   }, [password])
+
+  useEffect(() => {
+    Holder.run();
+  }, [showToast])
 
   const handlePasswordGeneration = () => {
     const generatedPassword: string = passwordUtils.generatePassword(
