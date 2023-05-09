@@ -1,5 +1,3 @@
-import React from "react";
-
 interface PasswordOptions {
   length: number;
   useNumbers: boolean;

@@ -1,14 +1,13 @@
-import React, { useState, ChangeEvent, useEffect, KeyboardEventHandler } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import { Button, Card, Container, Form, InputGroup} from "react-bootstrap";
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import passwordUtils from '../components/passwordUtils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash, faL } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import zxcvbn, { ZXCVBNResult } from 'zxcvbn'
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import CustomToast from '../components/Toast';
-import Holder from 'holderjs';
 
 
  const PasswordGenerator = () => {
@@ -31,7 +30,6 @@ import Holder from 'holderjs';
   }, [password])
 
   useEffect(() => {
-    Holder.run();
   }, [showToast])
 
   const handlePasswordGeneration = () => {
@@ -195,7 +193,7 @@ import Holder from 'holderjs';
                   <Form.Control
                     type={passwordVisibility ? "text" : "password"}
                     name="password-area"
-                    placeholder="Generated password displayed here"
+                    placeholder="Your new password will appear here."
                     aria-label="Password"
                     value={password} 
                     readOnly                
@@ -226,7 +224,7 @@ import Holder from 'holderjs';
                       type="checkbox"
                       checked={useSpecialChars}
                       onChange={handleSpecialCharsChange}
-                      label="Include special characters"
+                      label="Include special characters (-_+=!@#$%^&*()[]{}|;:,.<>?/)"
                     />
                   </Form.Group>
                   <Form.Group>
@@ -234,7 +232,7 @@ import Holder from 'holderjs';
                       type="checkbox"
                       checked={useUppercase}
                       onChange={handleUppercaseChange}
-                      label="Include uppercase characters"
+                      label="Include uppercase characters (ABCDEFGHIJKLMNOPQRSTUVWXYZ)"
                     />
                   </Form.Group>
 
@@ -243,7 +241,7 @@ import Holder from 'holderjs';
                       type="checkbox"
                       checked={getUseLowercase}
                       onChange={handleLowerCaseChange}
-                      label="Include lowercase characters"
+                      label="Include lowercase characters (abcdefghijklmnopqrstuvwxyz)"
                     />
                   </Form.Group>
 
@@ -252,12 +250,12 @@ import Holder from 'holderjs';
                     type="checkbox"
                     checked={useNumbers}
                     onChange={handleNumbersChange}
-                    label="Include numbers"
+                    label="Include numbers (0123456789)"
                     />
                   </Form.Group>
                 </Form>           
                       
-                <Form.Label htmlFor="special-chars">Enter special characters to use in password:</Form.Label>             
+                <Form.Label htmlFor="special-chars">Limit selection of special characters:</Form.Label>             
                 
                 <Form.Control type="text" name="special-chars" placeholder="Special characters to include" value={customSpecialChars} onChange={handleSpecialCharsInputChange} />             
                     
