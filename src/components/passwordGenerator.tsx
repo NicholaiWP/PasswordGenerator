@@ -44,6 +44,7 @@ import CustomToast from '../components/Toast';
     setPassword(generatedPassword);
     handleScore(generatedPassword);
     checkAllOptionsUnchecked();
+  
   };
 
   function handleScore(password: string) {
@@ -175,6 +176,11 @@ import CustomToast from '../components/Toast';
         e.currentTarget.value = minLength.toString();
     }
   }
+
+  const handleSubmit = (e:React.FormEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
   
   return (
     <>
@@ -182,11 +188,12 @@ import CustomToast from '../components/Toast';
       <Container className="vh-100 px-0" fluid={true}>
         <Row className="vh-100 px-0">     
           <Col id="card-col" xs={12} sm={8} md={6} lg={4}>
-          <Card bg="black" text="white">
+          <Form onSubmit={handleSubmit}>
+           <Card bg="black" text="white">
             <Card.Header>
                         
             </Card.Header>
-            <Card.Body>
+            <Card.Body>           
                 <InputGroup className="mb-3">
                   <Form.Label htmlFor="password-area"></Form.Label>
                   <Form.Control
@@ -206,9 +213,9 @@ import CustomToast from '../components/Toast';
                   </Button>
                 </InputGroup>             
                 {error && <div style={{ color: "red" }}>{error}</div>}
-                <Form>
-                  <Form.Group>
+                
 
+                  <Form.Group>
                     <Form.Label>Password length:</Form.Label>
                     <Form.Control
                       type="number"                                 
@@ -219,14 +226,9 @@ import CustomToast from '../components/Toast';
                       onChange={handlePasswordLengthChange}
                     />
                   </Form.Group>
-                  <Form.Group style={{marginTop:15 + 'px'}}>
-                    <Form.Check
-                      type="checkbox"
-                      checked={useSpecialChars}
-                      onChange={handleSpecialCharsChange}
-                      label="Include special characters (-_+=!@#$%^&*()[]{}|;:,.<>?/)"
-                    />
-                  </Form.Group>
+
+                  <hr></hr>
+
                   <Form.Group>
                     <Form.Check
                       type="checkbox"
@@ -252,13 +254,23 @@ import CustomToast from '../components/Toast';
                     onChange={handleNumbersChange}
                     label="Include numbers (0123456789)"
                     />
-                  </Form.Group>
-                </Form>           
-                      
-                <Form.Label htmlFor="special-chars">Limit selection of special characters:</Form.Label>             
-                
-                <Form.Control type="text" name="special-chars" placeholder="Special characters to include" value={customSpecialChars} onChange={handleSpecialCharsInputChange} />             
-                    
+                  </Form.Group>                  
+
+                  <hr></hr>
+
+                <Form.Group style={{marginTop:10 + 'px'}}>
+                    <Form.Check
+                      type="checkbox"
+                      checked={useSpecialChars}
+                      onChange={handleSpecialCharsChange}
+                      label="Include special characters (-_+=!@#$%^&*()[]{}|;:,.<>?/)"
+                    />
+                    <Form.Label htmlFor="special-chars">Limit selection of special characters:</Form.Label>                           
+                    <Form.Control type="text" name="special-chars" placeholder="Special characters to include" value={customSpecialChars} onChange={handleSpecialCharsInputChange} />             
+                  </Form.Group>   
+
+                  <hr></hr>
+
                 <ProgressBar id="progress-bar" style={{marginTop:15 + 'px'}} now={passwordScore * 25} className={getProgressColor()} />
                 <small>{`Password Strength: ${passwordScore} / 4`}</small>             
 
@@ -267,29 +279,42 @@ import CustomToast from '../components/Toast';
                   <li>Crack time: {result.crack_times_display.online_no_throttling_10_per_second}</li>
                 </ul>
               )}                           
-              
+          
           </Card.Body>
+
           <Card.Footer>
-          <div>             
+
+          <React.Fragment>             
               <p>
                 <small>Password strength is calculated using zxcvbn, which is a password strength estimator inspired by password crackers. 
                   More information on zxcvbn can be found 
                   <a href="https://github.com/dropbox/zxcvbn"><u> here</u></a>
                 </small>
                 </p>
-            </div>        
+            </React.Fragment>
+
+            <hr></hr>  
+
             <div className="center">           
-                <Button className="btn-child" variant="primary" onClick={handlePasswordGeneration}>
+                <Button type="submit" className="btn-child" variant="primary" onClick={handlePasswordGeneration}>
                   Generate password
                 </Button>
                 <Button className="btn btn-primary btn-child" id="clear" onClick={clearPassword}>Clear Password</Button>
                 <Button className="btn btn-primary btn-child" id="download-btn" onClick={canDownload}>Download Password</Button>              
             </div>
+
           </Card.Footer>
-      </Card>
-      </Col>
-    </Row>
+
+         </Card>
+
+        </Form> 
+
+        </Col>
+
+      </Row>
+
       </Container>  
+
     </>
    
    );
