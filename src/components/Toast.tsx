@@ -23,7 +23,7 @@ const CustomToast: React.FC<Props> = ({ message, toastHeaderMessage, showToast, 
     <ToastContainer style={{ margin: "10px", display:'grid', width:'100%', placeItems:'center' }}>
       <Toast show={showToast} onClose={handleClose} delay={3000} autohide>
         <Toast.Header>
-            <div></div>
+            <div>Notification</div>
             <strong className="me-auto">{toastHeaderMessage}</strong>
             <small>Just now!</small>
         </Toast.Header>
