@@ -11,13 +11,14 @@ const passwordUtils = {
     const { length, useNumbers, useSpecialChars, useUppercase, useLowercase } = props;
 
     // Define character sets for each category
-    const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
-    const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const numberChars = '0123456789';
-    const specialChars = '-_+=!@#$%^&*()[]{}|;:,.<>?/';
+    const lowercaseChars:string = 'abcdefghijklmnopqrstuvwxyz';
+    const uppercaseChars:string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const numberChars:string = '0123456789';
+    const specialChars:string = '-_+=!@#$%^&*()[]{}|;:,.<>?/';
 
     // Determine which categories to include based on user input
-    const categories = [];
+    const categories:string[] = [];
+
     if (useLowercase){
       categories.push(lowercaseChars);
     } 
@@ -32,7 +33,7 @@ const passwordUtils = {
     } 
 
     // Ensure that at least one character from each selected category is included
-    let password = '';
+    let password:string = '';
     categories.forEach(category => {
       password += category.charAt(Math.floor(Math.random() * category.length));
     });
