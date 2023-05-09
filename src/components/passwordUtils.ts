@@ -10,15 +10,39 @@ const passwordUtils = {
   generatePassword(props: PasswordOptions, customSpecialChars: string): string {
     const { length, useNumbers, useSpecialChars, useUppercase, useLowercase } = props;
 
-    const lowercaseChars = useLowercase ? 'abcdefghijklmnopqrstuvwxyz':'';
-    const uppercaseChars = useUppercase ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' : '';
-    const numberChars = useNumbers ? '0123456789' : '';
-    const specialChars = useSpecialChars ? '-_+=!@#$%^&*()[]{}|;:,.<>?/': '';
+    // Define character sets for each category
+    const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
+    const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const numberChars = '0123456789';
+    const specialChars = '-_+=!@#$%^&*()[]{}|;:,.<>?/';
 
-    const availableChars = lowercaseChars + uppercaseChars + numberChars + (customSpecialChars ? customSpecialChars : specialChars);
+    // Determine which categories to include based on user input
+    const categories = [];
+    if (useLowercase){
+      categories.push(lowercaseChars);
+    } 
+    if (useUppercase){
+      categories.push(uppercaseChars);
+    } 
+    if (useNumbers){
+      categories.push(numberChars);
+    } 
+    if (useSpecialChars){
+      categories.push(customSpecialChars ? customSpecialChars : specialChars);
+    } 
 
-    const password = Array.from({ length }, () => availableChars[Math.floor(Math.random() * availableChars.length)]).join('');
-    
+    // Ensure that at least one character from each selected category is included
+    let password = '';
+    categories.forEach(category => {
+      password += category.charAt(Math.floor(Math.random() * category.length));
+    });
+
+    // Add additional random characters to fill out the rest of the password
+    while (password.length < length) {
+      let category = categories[Math.floor(Math.random() * categories.length)];
+      password += category.charAt(Math.floor(Math.random() * category.length));
+    }
+
     return password;
   }
 }

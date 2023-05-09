@@ -9,7 +9,6 @@ import zxcvbn, { ZXCVBNResult } from 'zxcvbn'
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import CustomToast from '../components/Toast';
 
-
  const PasswordGenerator = () => {
   const [password, setPassword] = useState<string>('');
   const [passwordLength, setPasswordLength] = useState<number>(12);
@@ -166,7 +165,7 @@ import CustomToast from '../components/Toast';
 
   const handlePasswordLengthInput = (e: React.FormEvent<HTMLInputElement>) => {
     const maxLength = 32;
-    const minLength = 0;
+    const minLength = 6;
     const currentValue = parseInt(e.currentTarget.value, 10);
   
     if (currentValue > maxLength) {
@@ -209,10 +208,11 @@ import CustomToast from '../components/Toast';
                 {error && <div style={{ color: "red" }}>{error}</div>}
                 <Form>
                   <Form.Group>
+
                     <Form.Label>Password length:</Form.Label>
                     <Form.Control
                       type="number"                                 
-                      min={0}
+                      min={6}
                       max={32}
                       onInput={handlePasswordLengthInput}
                       value={passwordLength}
