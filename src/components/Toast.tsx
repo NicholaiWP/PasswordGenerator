@@ -23,7 +23,6 @@ const CustomToast: React.FC<Props> = ({ message, toastHeaderMessage, showToast, 
     <ToastContainer style={{ margin: "10px", display:'grid', width:'100%', placeItems:'center' }}>
       <Toast show={showToast} onClose={handleClose} delay={3000} autohide>
         <Toast.Header>
-            <img src="holder.js/20x20?text=%20" className="rounded me-2" alt="" />
             <strong className="me-auto">{toastHeaderMessage}</strong>
             <small>Just now!</small>
         </Toast.Header>

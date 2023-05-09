@@ -197,8 +197,8 @@ import Holder from 'holderjs';
                     name="password-area"
                     placeholder="Generated password displayed here"
                     aria-label="Password"
-                    value={password}
-                    readOnly
+                    value={password} 
+                    readOnly                
                   >              
                   </Form.Control>
                   <Button variant="light" onClick={togglePasswordVisibility}>
