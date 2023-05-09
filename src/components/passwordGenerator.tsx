@@ -181,7 +181,7 @@ import Holder from 'holderjs';
   
   return (
     <>
-    {displayToast(`"successfully copied: ${password} to clipboard"`)}
+    {passwordVisibility ? displayToast(`successfully copied: '${password}' to clipboard`): displayToast("successfully copied password to clipboard")}
       <Container className="vh-100 px-0" fluid={true}>
         <Row className="vh-100 px-0">     
           <Col id="card-col" xs={12} sm={8} md={6} lg={4}>
