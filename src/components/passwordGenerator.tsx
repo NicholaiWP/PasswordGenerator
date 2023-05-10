@@ -8,6 +8,7 @@ import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import zxcvbn, { ZXCVBNResult } from 'zxcvbn'
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import CustomToast from '../components/Toast';
+import DownloadButton from "./DownloadButton";
 
  const PasswordGenerator = () => {
   const [password, setPassword] = useState<string>('');
@@ -66,7 +67,6 @@ import CustomToast from '../components/Toast';
     );
   };
   
-
   const handlePasswordCopy = () => {
     navigator.clipboard.writeText(password).then(() => {
         if(password.length > 0){
@@ -81,32 +81,6 @@ import CustomToast from '../components/Toast';
         alert("something went wrong whilst trying to copy from clipboard");
       });
   };
-
-  const downloadPassword = () => {
-    const element = document.createElement("a");
-    const file = new Blob([password], { type: "text/plain" });
-    element.href = URL.createObjectURL(file);
-    element.download = "myPassword.txt";
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element); // remove the element after download is completed
-  };
-  
-  const canDownload = ():boolean => {
-    if(password !== '' && password !== undefined && password !== null){
-      if(navigator.userAgent.match(/(iPad|iPhone|iPod|Android)/)) { // check if the device is a mobile device
-        window.open(`data:text/plain;charset=utf-8,${encodeURIComponent(password)}`, '_blank'); // open the download in a new window
-      } else {
-        downloadPassword(); // download the password normally
-      }
-      return true;
-    }
-    else{
-      setError("You can not download empty passwords. Please generate one");
-      return false;
-    }
-  }  
-   
 
   const handlePasswordLengthChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newLength: number = parseInt(e.target.value, 10);
@@ -212,8 +186,7 @@ import CustomToast from '../components/Toast';
                     Copy
                   </Button>
                 </InputGroup>             
-                {error && <div style={{ color: "red" }}>{error}</div>}
-                
+                {error && <div style={{ color: "red" }}>{error}</div>}               
 
                   <Form.Group>
                     <Form.Label>Password length:</Form.Label>
@@ -234,7 +207,7 @@ import CustomToast from '../components/Toast';
                       type="checkbox"
                       checked={useUppercase}
                       onChange={handleUppercaseChange}
-                      label="Include uppercase characters (ABCDEFGHIJKLMNOPQRSTUVWXYZ)"
+                      label="Include uppercase characters (ABCDEFGHIJKLMNOPQRSTUVWXYZ)"                     
                     />
                   </Form.Group>
 
@@ -299,8 +272,8 @@ import CustomToast from '../components/Toast';
                 <Button type="submit" className="btn-child" variant="primary" onClick={handlePasswordGeneration}>
                   Generate password
                 </Button>
-                <Button className="btn btn-primary btn-child" id="clear" onClick={clearPassword}>Clear Password</Button>
-                <Button className="btn btn-primary btn-child" id="download-btn" onClick={canDownload}>Download Password</Button>              
+                <Button className="btn btn-primary btn-child" id="clear" onClick={clearPassword}>Clear Password</Button>             
+                <DownloadButton passwordString={password} setError={setError}/>           
             </div>
 
           </Card.Footer>

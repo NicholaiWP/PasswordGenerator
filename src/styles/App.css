@@ -36,9 +36,10 @@ body{
 .form-check{
  margin-top: 10px;
  margin-bottom: 10px;
+ overflow-wrap: break-word;
 }
 
-@media only screen and (max-width: 480px){
+@media only screen and (max-height: 480px), screen and (max-width:480px){
   body{
       overflow: visible;
   }   
