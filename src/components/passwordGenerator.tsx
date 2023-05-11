@@ -165,7 +165,7 @@ import DownloadButton from "./DownloadButton";
           <Form onSubmit={handleSubmit}>
            <Card bg="black" text="white">
             <Card.Header>
-                        
+                      
             </Card.Header>
             <Card.Body>           
                 <InputGroup className="mb-3">
@@ -268,14 +268,19 @@ import DownloadButton from "./DownloadButton";
 
             <hr></hr>  
 
-            <div className="center">           
-                <Button type="submit" className="btn-child" variant="primary" onClick={handlePasswordGeneration}>
-                  Generate password
-                </Button>
+            <div className="btnPositioning">                        
                 <Button className="btn btn-primary btn-child" id="clear" onClick={clearPassword}>Clear Password</Button>             
                 <DownloadButton passwordString={password} setError={setError}/>           
             </div>
 
+            <hr></hr>
+                     
+            <div className="container">
+                <Button type="submit" className="btn-generate-password" onClick={handlePasswordGeneration}>
+                Generate password
+              </Button>
+            </div>
+                               
           </Card.Footer>
 
          </Card>

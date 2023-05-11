@@ -18,20 +18,18 @@ body{
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-  overflow: hidden;
 }
 
-.center{
+.btnPositioning{
   display:flex;
-  justify-content: center;
-  align-items: center;
   gap: 5px;
   flex-wrap: wrap;
 }
 
-.center .btn-child{
+.btnPositioning .btn-child{
   flex:1 1 auto;
 }
+
 
 .form-check{
  margin-top: 10px;
@@ -39,9 +37,25 @@ body{
  overflow-wrap: break-word;
 }
 
-@media only screen and (max-height: 480px), screen and (max-width:480px){
-  body{
-      overflow: visible;
-  }   
+.container{
+  display: flex;
+}
+
+.btn-generate-password{
+  flex-grow: 1;
+}
+
+/* hide scrollbar on larger screens / If greater than or equal to */
+@media only screen and (min-width: 769px) {
+  body {
+    overflow: hidden;
+  }
+}
+
+/* show scrollbar on smaller screens / If less than or equal to */
+@media only screen and (max-width: 768px), screen and (max-height:768px) {
+  body {
+    overflow: visible;
+  }
 }
 
