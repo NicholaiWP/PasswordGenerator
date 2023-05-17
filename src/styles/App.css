@@ -30,6 +30,23 @@ body{
   flex:1 1 auto;
 }
 
+div.no-padding-no-margin{
+  padding:0;
+  margin:0;
+}
+
+.toast-container {
+  display: flex;
+  justify-content: center;
+  margin-top:10px;
+  margin-bottom: 10px;
+}
+
+.toast-content {
+  width: 100%; /* Optional: Adjust the width as needed */
+  max-width: 400px; /* Optional: Set a max-width for the toast container */
+}
+
 
 .form-check{
  margin-top: 10px;
@@ -37,25 +54,88 @@ body{
  overflow-wrap: break-word;
 }
 
-.container{
+.submitBtncontainer{
   display: flex;
+}
+
+.footer-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: black;
+  display: flex;
+  margin-top:10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-content {
+  padding: 10px;
+  margin: 0px;
+  padding: 0px;
+  color: #0d6efd;
 }
 
 .btn-generate-password{
   flex-grow: 1;
 }
 
-/* hide scrollbar on larger screens / If greater than or equal to */
+.navbar-toggler{
+  margin-right: 10px;
+}
+
+div.navbar-nav a.nav-link{
+  color:#0d6efd;
+}
+
+div.navbar-nav a.nav-link:hover{
+  color:#0d6efd;
+  text-decoration: underline;
+}
+
+span.navbar-brand {
+  color:#0d6efd;
+}
+
+span.navbar-brand:hover:active {
+  
+}
+
+span.navbar-brand:hover{
+  color:#0d6efd;
+}
+
+a.left-spacing.nav-link{
+  margin-left: 10px;
+}
+
+button.navbar-toggler{
+  background-color: #0d6efd;
+}
+
+.lock-image {
+  transform-origin: center;
+}
+
+.lock-image:hover {
+  animation: shake 0.4s infinite;
+}
+
+/* Hide scrollbar on larger screens */
 @media only screen and (min-width: 769px) {
   body {
     overflow: hidden;
   }
 }
 
-/* show scrollbar on smaller screens / If less than or equal to */
-@media only screen and (max-width: 768px), screen and (max-height:768px) {
+/* Show scrollbar on smaller screens */
+@media only screen and (max-width: 768px), screen and (max-height: 768px) {
   body {
     overflow: visible;
+    overflow-x: auto;
+    overflow-y: auto;
   }
 }
+
 

@@ -1,39 +1,35 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
-import { Button, Card, Container, Form, InputGroup} from "react-bootstrap";
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import passwordUtils from '../components/passwordUtils'
+import { Button, Card, Form, InputGroup} from "react-bootstrap";
+import PasswordHelper from './PasswordHelper';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import zxcvbn, { ZXCVBNResult } from 'zxcvbn'
 import ProgressBar from 'react-bootstrap/ProgressBar';
-import CustomToast from '../components/Toast';
 import DownloadButton from "./DownloadButton";
 
- const PasswordGenerator = () => {
-  const [password, setPassword] = useState<string>('');
+
+ const PasswordForm = () => {
+
   const [passwordLength, setPasswordLength] = useState<number>(12);
   const [useSpecialChars, setUseSpecialChars] = useState<boolean>(true);
   const [useUppercase, setUseUppercase] = useState<boolean>(true);
   const [getUseLowercase, setUseLowercase] = useState<boolean>(true);
   const [useNumbers, setUseNumbers] = useState<boolean>(true);
-  const [passwordVisibility, setPasswordVisibility] = useState<boolean>(true);
   const [passwordScore, setPasswordScore] = useState<number>(0);
   const [result, setResult] = useState<ZXCVBNResult>();
   const [error, setError] = useState<string>("");
   const [customSpecialChars, setCustomSpecialChars] = useState<string>('');
-  const [showToast, setShowToast] = React.useState<boolean>(false);
+  const [passwordVisibility, setPasswordVisibility] = useState<boolean>(true);
+  const [password, setPassword] = useState('');
 
 
   useEffect(() => {
     handleScore(password)  
   }, [password])
 
-  useEffect(() => {
-  }, [showToast])
 
   const handlePasswordGeneration = () => {
-    const generatedPassword: string = passwordUtils.generatePassword(
+    const generatedPassword: string = PasswordHelper.generatePassword(
       {
         length: passwordLength,
         useSpecialChars: useSpecialChars,
@@ -59,21 +55,22 @@ import DownloadButton from "./DownloadButton";
       return 'pass-weak-color';
     }
     return '';
-  }
-
-  const displayToast = (message: string) => {
-    return (
-      <CustomToast message={message} toastHeaderMessage={"Notice"} showToast={showToast} setShowToast={setShowToast} />
-    );
-  };
+  } 
   
   const handlePasswordCopy = () => {
+
+    if(password.length <= 0){      
+      setError('You must generate a password first before copying it');
+      return;
+    }
+
     navigator.clipboard.writeText(password).then(() => {
-        if(password.length > 0){
-          setShowToast(true);  
+       
+        if(passwordVisibility){
+          alert(`successfully copied: '${password}' to clipboard`)
         }
         else{
-          setError('You must generate a password first before copying it')
+          alert(`successfully copied password to clipboard`)
         }
               
       })
@@ -81,6 +78,7 @@ import DownloadButton from "./DownloadButton";
         alert("something went wrong whilst trying to copy from clipboard");
       });
   };
+
 
   const handlePasswordLengthChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newLength: number = parseInt(e.target.value, 10);
@@ -158,15 +156,9 @@ import DownloadButton from "./DownloadButton";
   
   return (
     <>
-    {passwordVisibility ? displayToast(`successfully copied: '${password}' to clipboard`): displayToast("successfully copied password to clipboard")}
-      <Container className="vh-100 px-0" fluid={true}>
-        <Row className="vh-100 px-0">     
-          <Col id="card-col" xs={12} sm={8} md={6} lg={4}>
           <Form onSubmit={handleSubmit}>
            <Card bg="black" text="white">
-            <Card.Header>
-                      
-            </Card.Header>
+            <Card.Header></Card.Header>
             <Card.Body>           
                 <InputGroup className="mb-3">
                   <Form.Label htmlFor="password-area"></Form.Label>
@@ -275,7 +267,7 @@ import DownloadButton from "./DownloadButton";
 
             <hr></hr>
                      
-            <div className="container">
+            <div className="submitBtncontainer">
                 <Button type="submit" className="btn-generate-password" onClick={handlePasswordGeneration}>
                 Generate password
               </Button>
@@ -286,16 +278,9 @@ import DownloadButton from "./DownloadButton";
          </Card>
 
         </Form> 
-
-        </Col>
-
-      </Row>
-
-      </Container>  
-
     </>
    
    );
 };
 
-export default PasswordGenerator;
+export default PasswordForm;
