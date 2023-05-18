@@ -1,7 +1,4 @@
-.row{
-  justify-content: center;
-  align-items: center;
-}
+
 
 .pass-weak-color {
   background-color: red;
@@ -35,18 +32,12 @@ div.no-padding-no-margin{
   margin:0;
 }
 
-.toast-container {
-  display: flex;
-  justify-content: center;
-  margin-top:10px;
-  margin-bottom: 10px;
+div.tips-margin-bottom-offset{
+  margin-bottom:15px;
 }
-
-.toast-content {
-  width: 100%; /* Optional: Adjust the width as needed */
-  max-width: 400px; /* Optional: Set a max-width for the toast container */
+.password-form{
+  margin-bottom: 15px;
 }
-
 
 .form-check{
  margin-top: 10px;
@@ -54,27 +45,12 @@ div.no-padding-no-margin{
  overflow-wrap: break-word;
 }
 
+div#container{
+  margin-top: 5px;
+}
+
 .submitBtncontainer{
   display: flex;
-}
-
-.footer-container {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: black;
-  display: flex;
-  margin-top:10px;
-  justify-content: center;
-  align-items: center;
-}
-
-.footer-content {
-  padding: 10px;
-  margin: 0px;
-  padding: 0px;
-  color: #0d6efd;
 }
 
 .btn-generate-password{
@@ -98,10 +74,6 @@ span.navbar-brand {
   color:#0d6efd;
 }
 
-span.navbar-brand:hover:active {
-  
-}
-
 span.navbar-brand:hover{
   color:#0d6efd;
 }
@@ -122,20 +94,5 @@ button.navbar-toggler{
   animation: shake 0.4s infinite;
 }
 
-/* Hide scrollbar on larger screens */
-@media only screen and (min-width: 769px) {
-  body {
-    overflow: hidden;
-  }
-}
-
-/* Show scrollbar on smaller screens */
-@media only screen and (max-width: 768px), screen and (max-height: 768px) {
-  body {
-    overflow: visible;
-    overflow-x: auto;
-    overflow-y: auto;
-  }
-}
 
 

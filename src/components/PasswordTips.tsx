@@ -4,8 +4,8 @@ import { Container, Row, Col, Card } from 'react-bootstrap';
 const PasswordTips: React.FC = () => {
   return (
     <Container>
-      <Row className="justify-content-center">
-        <Col xs={12} md={8} lg={10} xl={12}>
+      <Row id="tips-margin-bottom-offset" className="justify-content-center align-items-center">
+        <Col xs={12} md={12} lg={12} xl={12}>
           <Card className="mt-4">
             <Card.Body>
               <Card.Title>Helpful Password Tips</Card.Title>

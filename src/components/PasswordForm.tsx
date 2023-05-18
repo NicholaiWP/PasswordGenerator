@@ -1,6 +1,7 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
 import { Button, Card, Form, InputGroup} from "react-bootstrap";
 import PasswordHelper from './PasswordHelper';
+import {languageSelection, Languages, LanguageOptions} from './PasswordHelper';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import zxcvbn, { ZXCVBNResult } from 'zxcvbn'
@@ -20,7 +21,9 @@ import DownloadButton from "./DownloadButton";
   const [error, setError] = useState<string>("");
   const [customSpecialChars, setCustomSpecialChars] = useState<string>('');
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(true);
+  const [useNoDuplicateChars, setUseNoDuplicateChars] = useState<boolean>(false);
   const [password, setPassword] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState(Languages.English);
 
 
   useEffect(() => {
@@ -29,19 +32,27 @@ import DownloadButton from "./DownloadButton";
 
 
   const handlePasswordGeneration = () => {
-    const generatedPassword: string = PasswordHelper.generatePassword(
-      {
-        length: passwordLength,
-        useSpecialChars: useSpecialChars,
-        useUppercase: useUppercase,
-        useLowercase:getUseLowercase,
-        useNumbers: useNumbers 
-      }, customSpecialChars);
+
+    const langObj: LanguageOptions | undefined = languageSelection.find(
+      (lang) => lang.language === selectedLanguage
+    );
+
+    if(langObj){
+      const generatedPassword: string = PasswordHelper.generatePassword(
+        {
+          length: passwordLength,
+          useSpecialChars: useSpecialChars,
+          useUppercase: useUppercase,
+          useLowercase:getUseLowercase,
+          useNoDuplicateChars:useNoDuplicateChars,
+          useNumbers: useNumbers 
+        }, customSpecialChars, langObj);
+       
+      setPassword(generatedPassword);
+      handleScore(generatedPassword);
+      checkAllOptionsUnchecked();
+    }
      
-    setPassword(generatedPassword);
-    handleScore(generatedPassword);
-    checkAllOptionsUnchecked();
-  
   };
 
   function handleScore(password: string) {
@@ -49,6 +60,11 @@ import DownloadButton from "./DownloadButton";
     setPasswordScore(result?.score || 0);
     setResult(result);
   }
+
+  const handleLanguageChange = (e: any) => {
+    const selectedValue = Number(e.target.value);
+    setSelectedLanguage(selectedValue);
+  };
 
   const getProgressColor = () => {
     if (passwordScore === 0) {
@@ -90,6 +106,10 @@ import DownloadButton from "./DownloadButton";
   const handleSpecialCharsChange = () => {
     setUseSpecialChars(!useSpecialChars);
   };
+
+  const handleNoDuplicateCharsInPassword = () => {
+    setUseNoDuplicateChars(!useNoDuplicateChars);
+  }
 
   const handleUppercaseChange = () => {
     setUseUppercase(!useUppercase);
@@ -156,7 +176,7 @@ import DownloadButton from "./DownloadButton";
   
   return (
     <>
-          <Form onSubmit={handleSubmit}>
+          <Form className="password-form" onSubmit={handleSubmit}>
            <Card bg="black" text="white">
             <Card.Header></Card.Header>
             <Card.Body>           
@@ -167,8 +187,7 @@ import DownloadButton from "./DownloadButton";
                     name="password-area"
                     placeholder="Your new password will appear here."
                     aria-label="Password"
-                    value={password} 
-                    readOnly                
+                    value={password}                                    
                   >              
                   </Form.Control>
                   <Button variant="light" onClick={togglePasswordVisibility}>
@@ -179,6 +198,18 @@ import DownloadButton from "./DownloadButton";
                   </Button>
                 </InputGroup>             
                 {error && <div style={{ color: "red" }}>{error}</div>}               
+
+                <Form.Group controlId="exampleForm.SelectCustom">
+                <Form.Label>Select a language</Form.Label>
+                <Form.Control as="select"  value={selectedLanguage} onChange={(e) => handleLanguageChange(e)}>
+                  {languageSelection.map((lang) => (
+                    <option value={lang.language} key={lang.language.toString()}>
+                      {Languages[lang.language]}
+                    </option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
+
 
                   <Form.Group>
                     <Form.Label>Password length:</Form.Label>
@@ -199,16 +230,25 @@ import DownloadButton from "./DownloadButton";
                       type="checkbox"
                       checked={useUppercase}
                       onChange={handleUppercaseChange}
-                      label="Include uppercase characters (ABCDEFGHIJKLMNOPQRSTUVWXYZ)"                     
+                      label="Include uppercase characters"                     
                     />
-                  </Form.Group>
+                  </Form.Group>                 
 
                   <Form.Group>
                     <Form.Check
                       type="checkbox"
                       checked={getUseLowercase}
                       onChange={handleLowerCaseChange}
-                      label="Include lowercase characters (abcdefghijklmnopqrstuvwxyz)"
+                      label="Include lowercase characters"
+                    />
+                  </Form.Group>
+
+                  <Form.Group>
+                    <Form.Check
+                      type="checkbox"
+                      checked={useNoDuplicateChars}
+                      onChange={handleNoDuplicateCharsInPassword}
+                      label="No duplicate characters"                     
                     />
                   </Form.Group>
 
