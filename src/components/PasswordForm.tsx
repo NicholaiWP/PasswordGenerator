@@ -22,6 +22,7 @@ import DownloadButton from "./DownloadButton";
   const [customSpecialChars, setCustomSpecialChars] = useState<string>('');
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(true);
   const [useNoDuplicateChars, setUseNoDuplicateChars] = useState<boolean>(false);
+  const [saveSettings, setSaveSettings] = useState<boolean>(false);
   const [password, setPassword] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState(Languages.English);
 
@@ -30,6 +31,98 @@ import DownloadButton from "./DownloadButton";
     handleScore(password)  
   }, [password])
 
+
+  
+  const handleSaveSettings = (shouldSave: boolean) => {
+    if (shouldSave) {
+      localStorage.setItem('passwordLength', passwordLength.toString());
+      localStorage.setItem('useSpecialChars', useSpecialChars.toString());
+      localStorage.setItem('useUppercase', useUppercase.toString());
+      localStorage.setItem('useLowercase', getUseLowercase.toString());
+      localStorage.setItem('useNumbers', useNumbers.toString());
+      localStorage.setItem('useNoDuplicateChars', useNoDuplicateChars.toString());
+      localStorage.setItem('selectedLanguage', selectedLanguage.toString());
+      localStorage.setItem('saveSettings', shouldSave.toString());
+    } else {
+      localStorage.removeItem('passwordLength');
+      localStorage.removeItem('useSpecialChars');
+      localStorage.removeItem('useUppercase');
+      localStorage.removeItem('useLowercase');
+      localStorage.removeItem('useNumbers');
+      localStorage.removeItem('useNoDuplicateChars');
+      localStorage.removeItem('selectedLanguage');
+      localStorage.removeItem('saveSettings');
+    }
+  };
+  
+
+  const parseSelectedLanguage = (value: string): Languages | undefined => {
+    switch (value) {
+      case 'English':
+        return Languages.English;
+      case 'Spanish':
+        return Languages.Spanish;
+      case 'Danish':
+      return Languages.Danish;
+      case 'German':
+        return Languages.German;
+      case 'Italian':
+        return Languages.Italian;
+      case 'Russian':
+        return Languages.Russian;
+      case 'French':
+        return Languages.French;
+      case 'Swedish':
+        return Languages.Swedish;
+      default:
+        return undefined;
+    }
+  };
+
+  useEffect(() => {
+    const savedPasswordLength = localStorage.getItem('passwordLength');
+    if (savedPasswordLength) {
+      setPasswordLength(parseInt(savedPasswordLength, 10));
+    }
+  
+    const savedUseSpecialChars = localStorage.getItem('useSpecialChars');
+    if (savedUseSpecialChars) {
+      setUseSpecialChars(savedUseSpecialChars === 'true');
+    }
+  
+    const savedSettings = localStorage.getItem('saveSettings');
+    if (savedSettings) {
+      setSaveSettings(savedSettings === 'true');
+    }
+  
+    const savedUseUppercase = localStorage.getItem('useUppercase');
+    if (savedUseUppercase) {
+      setUseUppercase(savedUseUppercase === 'true');
+    }
+  
+    const savedUseLowercase = localStorage.getItem('useLowercase');
+    if (savedUseLowercase) {
+      setUseLowercase(savedUseLowercase === 'true');
+    }
+  
+    const savedUseNumbers = localStorage.getItem('useNumbers');
+    if (savedUseNumbers) {
+      setUseNumbers(savedUseNumbers === 'true');
+    }
+  
+    const savedUseNoDuplicateChars = localStorage.getItem('useNoDuplicateChars');
+    if (savedUseNoDuplicateChars) {
+      setUseNoDuplicateChars(savedUseNoDuplicateChars === 'true');
+    }
+  
+    const savedSelectedLanguage = localStorage.getItem('selectedLanguage');
+    if (savedSelectedLanguage) {
+      const parsedLanguage = parseSelectedLanguage(savedSelectedLanguage);
+      if (parsedLanguage) {
+        setSelectedLanguage(parsedLanguage);
+      }
+    }
+  }, []);
 
   const handlePasswordGeneration = () => {
 
@@ -96,12 +189,13 @@ import DownloadButton from "./DownloadButton";
   };
 
 
-  const handlePasswordLengthChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handlePasswordLengthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newLength: number = parseInt(e.target.value, 10);
     if (!isNaN(newLength)) {
       setPasswordLength(newLength);
     }
   };
+  
 
   const handleSpecialCharsChange = () => {
     setUseSpecialChars(!useSpecialChars);
@@ -142,10 +236,21 @@ import DownloadButton from "./DownloadButton";
     setPasswordVisibility(!passwordVisibility);
   };
 
+
   const handleSpecialCharsInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    
+    if(!useSpecialChars){
+      setError('You must enable special characters to limit the selection of special characters to use in your password')
+      setTimeout(() => {
+       setError('')
+      }, 2500);
+      
+      return;
+    }
+
     const allowedChars = '-_+=!@#$%^&*()[]{}|;:,.<>?/';
     const inputValue = event.target.value;
-  
+    
     for (let i = 0; i < inputValue.length; i++) {
       if (!allowedChars.includes(inputValue[i])) {
         setError('Invalid characters entered!');
@@ -155,19 +260,6 @@ import DownloadButton from "./DownloadButton";
     setError('');
     setCustomSpecialChars(inputValue);
   };
-
-  const handlePasswordLengthInput = (e: React.FormEvent<HTMLInputElement>) => {
-    const maxLength = 32;
-    const minLength = 6;
-    const currentValue = parseInt(e.currentTarget.value, 10);
-  
-    if (currentValue > maxLength) {
-      e.currentTarget.value = maxLength.toString();
-    }
-    else if(currentValue < minLength){
-        e.currentTarget.value = minLength.toString();
-    }
-  }
 
   const handleSubmit = (e:React.FormEvent) => {
     e.preventDefault();
@@ -187,7 +279,8 @@ import DownloadButton from "./DownloadButton";
                     name="password-area"
                     placeholder="Your new password will appear here."
                     aria-label="Password"
-                    value={password}                                    
+                    value={password}
+                    onChange={() => {}}                                    
                   >              
                   </Form.Control>
                   <Button variant="light" onClick={togglePasswordVisibility}>
@@ -210,14 +303,12 @@ import DownloadButton from "./DownloadButton";
                 </Form.Control>
               </Form.Group>
 
-
                   <Form.Group>
-                    <Form.Label>Password length:</Form.Label>
-                    <Form.Control
-                      type="number"                                 
+                    <br/>
+                    <Form.Label>Password length:  <span>{passwordLength}</span></Form.Label>
+                    <Form.Range
                       min={6}
                       max={32}
-                      onInput={handlePasswordLengthInput}
                       value={passwordLength}
                       onChange={handlePasswordLengthChange}
                     />
@@ -231,15 +322,20 @@ import DownloadButton from "./DownloadButton";
                       checked={useUppercase}
                       onChange={handleUppercaseChange}
                       label="Include uppercase characters"                     
-                    />
-                  </Form.Group>                 
-
-                  <Form.Group>
+                    />                                
+                 
                     <Form.Check
                       type="checkbox"
                       checked={getUseLowercase}
                       onChange={handleLowerCaseChange}
                       label="Include lowercase characters"
+                    />
+
+                    <Form.Check
+                    type="checkbox"
+                    checked={useNumbers}
+                    onChange={handleNumbersChange}
+                    label="Include numbers (0123456789)"
                     />
                   </Form.Group>
 
@@ -250,16 +346,18 @@ import DownloadButton from "./DownloadButton";
                       onChange={handleNoDuplicateCharsInPassword}
                       label="No duplicate characters"                     
                     />
-                  </Form.Group>
-
-                  <Form.Group>
-                  <Form.Check
-                    type="checkbox"
-                    checked={useNumbers}
-                    onChange={handleNumbersChange}
-                    label="Include numbers (0123456789)"
+                    
+                    <Form.Check
+                      type="checkbox"
+                      checked={saveSettings}
+                      onChange={() => {
+                        setSaveSettings(!saveSettings);
+                        handleSaveSettings(!saveSettings);
+                      }}
+                      label="Save settings in local storage"
                     />
-                  </Form.Group>                  
+
+                  </Form.Group>                              
 
                   <hr></hr>
 
@@ -277,25 +375,20 @@ import DownloadButton from "./DownloadButton";
                   <hr></hr>
 
                 <ProgressBar id="progress-bar" style={{marginTop:15 + 'px'}} now={passwordScore * 25} className={getProgressColor()} />
-                <small>{`Password Strength: ${passwordScore} / 4`}</small>             
+                <small>{`Password Strength: ${passwordScore} / 4`} - {result && (         
+                  <p>ZXCVBN Crack time: {result.crack_times_display.online_no_throttling_10_per_second}</p>               
+              )}  </small>             
 
-                {result && (
-                <ul>
-                  <li>Crack time: {result.crack_times_display.online_no_throttling_10_per_second}</li>
-                </ul>
-              )}                           
+                                         
           
           </Card.Body>
 
           <Card.Footer>
 
-          <React.Fragment>             
-              <p>
-                <small>Password strength is calculated using zxcvbn, which is a password strength estimator inspired by password crackers. 
-                  More information on zxcvbn can be found 
-                  <a href="https://github.com/dropbox/zxcvbn"><u> here</u></a>
-                </small>
-                </p>
+          <React.Fragment>                     
+                Password strength is calculated using zxcvbn, which is a password strength estimator inspired by password crackers. 
+                 More information on zxcvbn can be found 
+                  <a href="https://github.com/dropbox/zxcvbn"><u> here</u></a>                           
             </React.Fragment>
 
             <hr></hr>  
