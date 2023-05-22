@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
-import { Button, Card, Form, InputGroup} from "react-bootstrap";
+import { Button, Card, Form, InputGroup } from "react-bootstrap";
 import PasswordHelper from './PasswordHelper';
 import {languageSelection, Languages, LanguageOptions} from './PasswordHelper';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,6 +7,7 @@ import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import zxcvbn, { ZXCVBNResult } from 'zxcvbn'
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import DownloadButton from "./DownloadButton";
+import SaveLocalStorage from '../components/SaveLocalStorage';
 
 
  const PasswordForm = () => {
@@ -24,37 +25,13 @@ import DownloadButton from "./DownloadButton";
   const [useNoDuplicateChars, setUseNoDuplicateChars] = useState<boolean>(false);
   const [saveSettings, setSaveSettings] = useState<boolean>(false);
   const [password, setPassword] = useState('');
+  const [passwordLengthText, setPasswordLengthText] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState(Languages.English);
-
 
   useEffect(() => {
     handleScore(password)  
   }, [password])
 
-
-  
-  const handleSaveSettings = (shouldSave: boolean) => {
-    if (shouldSave) {
-      localStorage.setItem('passwordLength', passwordLength.toString());
-      localStorage.setItem('useSpecialChars', useSpecialChars.toString());
-      localStorage.setItem('useUppercase', useUppercase.toString());
-      localStorage.setItem('useLowercase', getUseLowercase.toString());
-      localStorage.setItem('useNumbers', useNumbers.toString());
-      localStorage.setItem('useNoDuplicateChars', useNoDuplicateChars.toString());
-      localStorage.setItem('selectedLanguage', selectedLanguage.toString());
-      localStorage.setItem('saveSettings', shouldSave.toString());
-    } else {
-      localStorage.removeItem('passwordLength');
-      localStorage.removeItem('useSpecialChars');
-      localStorage.removeItem('useUppercase');
-      localStorage.removeItem('useLowercase');
-      localStorage.removeItem('useNumbers');
-      localStorage.removeItem('useNoDuplicateChars');
-      localStorage.removeItem('selectedLanguage');
-      localStorage.removeItem('saveSettings');
-    }
-  };
-  
 
   const parseSelectedLanguage = (value: string): Languages | undefined => {
     switch (value) {
@@ -79,6 +56,7 @@ import DownloadButton from "./DownloadButton";
     }
   };
 
+    {/*fetch local storage values when component mounts, if any are saved*/}
   useEffect(() => {
     const savedPasswordLength = localStorage.getItem('passwordLength');
     if (savedPasswordLength) {
@@ -123,6 +101,7 @@ import DownloadButton from "./DownloadButton";
       }
     }
   }, []);
+ 
 
   const handlePasswordGeneration = () => {
 
@@ -140,7 +119,7 @@ import DownloadButton from "./DownloadButton";
           useNoDuplicateChars:useNoDuplicateChars,
           useNumbers: useNumbers 
         }, customSpecialChars, langObj);
-       
+
       setPassword(generatedPassword);
       handleScore(generatedPassword);
       checkAllOptionsUnchecked();
@@ -192,14 +171,20 @@ import DownloadButton from "./DownloadButton";
   const handlePasswordLengthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newLength: number = parseInt(e.target.value, 10);
     if (!isNaN(newLength)) {
+      
       setPasswordLength(newLength);
+      let txt = displayPasswordLengthMsg(newLength);
+      setPasswordLengthText(txt);
     }
+
   };
   
 
   const handleSpecialCharsChange = () => {
     setUseSpecialChars(!useSpecialChars);
   };
+
+  
 
   const handleNoDuplicateCharsInPassword = () => {
     setUseNoDuplicateChars(!useNoDuplicateChars);
@@ -261,16 +246,51 @@ import DownloadButton from "./DownloadButton";
     setCustomSpecialChars(inputValue);
   };
 
+  const displayPasswordLengthMsg = (newLength:number) => {
+    let msg: string = '';
+ 
+    if(newLength >= 12 && newLength <= 20){
+       msg = '- Great!'
+    }
+    else if(newLength < 12){
+         msg = '- Consider generating a longer password'      
+    }
+    else if(newLength > 20 && newLength <= 40){
+         msg = '- Hard to guess'       
+    }
+    else if(newLength > 40 && newLength < 50){
+         msg = '- Thats long enough now, dont you think?'       
+    }
+    else if(newLength === 50){
+      msg = '- If that is not going to keep your password secure, I do not know what!'
+    } 
+
+    return msg;
+}
+
   const handleSubmit = (e:React.FormEvent) => {
     e.preventDefault();
     e.stopPropagation();
   };
+
+  const localStorageProps = {
+    passwordLength:passwordLength,
+    useSpecialChars:useSpecialChars,
+    useUpper:useUppercase,
+    useLower:getUseLowercase,
+    useNumbers:useNumbers,
+    noDuplicateChars:useNoDuplicateChars,
+    saveSettings:saveSettings,
+    selectedlang:selectedLanguage,
+    setSave:setSaveSettings
+  }
   
   return (
     <>
           <Form className="password-form" onSubmit={handleSubmit}>
            <Card bg="black" text="white">
-            <Card.Header></Card.Header>
+            <Card.Header>           
+            </Card.Header>
             <Card.Body>           
                 <InputGroup className="mb-3">
                   <Form.Label htmlFor="password-area"></Form.Label>
@@ -280,7 +300,7 @@ import DownloadButton from "./DownloadButton";
                     placeholder="Your new password will appear here."
                     aria-label="Password"
                     value={password}
-                    onChange={() => {}}                                    
+                    onChange={(e) => {}}                                   
                   >              
                   </Form.Control>
                   <Button variant="light" onClick={togglePasswordVisibility}>
@@ -291,7 +311,6 @@ import DownloadButton from "./DownloadButton";
                   </Button>
                 </InputGroup>             
                 {error && <div style={{ color: "red" }}>{error}</div>}               
-
                 <Form.Group controlId="exampleForm.SelectCustom">
                 <Form.Label>Select a language</Form.Label>
                 <Form.Control as="select"  value={selectedLanguage} onChange={(e) => handleLanguageChange(e)}>
@@ -305,10 +324,10 @@ import DownloadButton from "./DownloadButton";
 
                   <Form.Group>
                     <br/>
-                    <Form.Label>Password length:  <span>{passwordLength}</span></Form.Label>
+                    <Form.Label>Password length:  <span>{passwordLength} {passwordLengthText}</span></Form.Label>
                     <Form.Range
                       min={6}
-                      max={32}
+                      max={50}
                       value={passwordLength}
                       onChange={handlePasswordLengthChange}
                     />
@@ -347,16 +366,8 @@ import DownloadButton from "./DownloadButton";
                       label="No duplicate characters"                     
                     />
                     
-                    <Form.Check
-                      type="checkbox"
-                      checked={saveSettings}
-                      onChange={() => {
-                        setSaveSettings(!saveSettings);
-                        handleSaveSettings(!saveSettings);
-                      }}
-                      label="Save settings in local storage"
-                    />
-
+                    <SaveLocalStorage {...localStorageProps}/>
+                  
                   </Form.Group>                              
 
                   <hr></hr>
