@@ -1,13 +1,10 @@
 
 
-.pass-weak-color {
-  background-color: red;
-}
-
 .progress{
   background-color: black !important;
   border: 1px solid white;
 }
+
 
 body{
   background: linear-gradient( navy, #203a43) no-repeat center center fixed;

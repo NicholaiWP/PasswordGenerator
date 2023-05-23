@@ -1,13 +1,13 @@
-import React, { useState, ChangeEvent, useEffect } from "react";
-import { Button, Card, Form, InputGroup } from "react-bootstrap";
+import React, { useState, ChangeEvent, useEffect } from 'react'
+import { Button, Card, Form, InputGroup, Tooltip, OverlayTrigger } from "react-bootstrap";
 import PasswordHelper from './PasswordHelper';
 import {languageSelection, Languages, LanguageOptions} from './PasswordHelper';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import zxcvbn, { ZXCVBNResult } from 'zxcvbn'
+import { faEye, faEyeSlash, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import DownloadButton from "./DownloadButton";
 import SaveLocalStorage from '../components/SaveLocalStorage';
+import { passwordStrength } from 'check-password-strength';
 
 
  const PasswordForm = () => {
@@ -18,7 +18,6 @@ import SaveLocalStorage from '../components/SaveLocalStorage';
   const [getUseLowercase, setUseLowercase] = useState<boolean>(true);
   const [useNumbers, setUseNumbers] = useState<boolean>(true);
   const [passwordScore, setPasswordScore] = useState<number>(0);
-  const [result, setResult] = useState<ZXCVBNResult>();
   const [error, setError] = useState<string>("");
   const [customSpecialChars, setCustomSpecialChars] = useState<string>('');
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(true);
@@ -29,7 +28,10 @@ import SaveLocalStorage from '../components/SaveLocalStorage';
   const [selectedLanguage, setSelectedLanguage] = useState(Languages.English);
 
   useEffect(() => {
-    handleScore(password)  
+    if(password !== ''){
+      handlePasswordScore();
+    }
+   
   }, [password])
 
 
@@ -121,29 +123,37 @@ import SaveLocalStorage from '../components/SaveLocalStorage';
         }, customSpecialChars, langObj);
 
       setPassword(generatedPassword);
-      handleScore(generatedPassword);
+      
       checkAllOptionsUnchecked();
     }
      
   };
 
-  function handleScore(password: string) {
-    const result = password ? zxcvbn(password) : undefined;
-    setPasswordScore(result?.score || 0);
-    setResult(result);
-  }
 
   const handleLanguageChange = (e: any) => {
     const selectedValue = Number(e.target.value);
     setSelectedLanguage(selectedValue);
   };
 
-  const getProgressColor = () => {
-    if (passwordScore === 0) {
-      return 'pass-weak-color';
-    }
-    return '';
-  } 
+
+  const handlePasswordScore = () => {
+
+      if(passwordStrength(password).id === 0){
+        setPasswordScore(1);
+     }
+     else if(passwordStrength(password).id === 1){
+       setPasswordScore(2);
+     }
+     else if(passwordStrength(password).id === 2){
+       setPasswordScore(3);
+     }
+     else if(passwordStrength(password).id === 3){
+       setPasswordScore(4);
+     }
+     else{
+       setPasswordScore(0);
+     }   
+  }
   
   const handlePasswordCopy = () => {
 
@@ -204,6 +214,7 @@ import SaveLocalStorage from '../components/SaveLocalStorage';
 
   const clearPassword = () => {
     setPassword('');
+    setPasswordScore(0);
   }
 
   const checkAllOptionsUnchecked = () => {
@@ -256,7 +267,7 @@ import SaveLocalStorage from '../components/SaveLocalStorage';
          msg = '- Consider generating a longer password'      
     }
     else if(newLength > 20 && newLength <= 40){
-         msg = '- Hard to guess'       
+         msg = '- Great, but probably hard to remember'       
     }
     else if(newLength > 40 && newLength < 50){
          msg = '- Thats long enough now, dont you think?'       
@@ -284,6 +295,9 @@ import SaveLocalStorage from '../components/SaveLocalStorage';
     selectedlang:selectedLanguage,
     setSave:setSaveSettings
   }
+
+  const toolTip = <Tooltip>To get a better password score, use a long password, 
+  special characters (symbols) as well as numbers, uppercase and lowercase characters</Tooltip>;
   
   return (
     <>
@@ -383,24 +397,17 @@ import SaveLocalStorage from '../components/SaveLocalStorage';
                     <Form.Control type="text" name="special-chars" placeholder="Special characters to include" value={customSpecialChars} onChange={handleSpecialCharsInputChange} />             
                   </Form.Group>   
 
-                  <hr></hr>
+                  <hr></hr>                 
+                
+                <p><OverlayTrigger overlay={toolTip} placement="left">
+                    <i><FontAwesomeIcon icon={faQuestionCircle}></FontAwesomeIcon></i>
+                  </OverlayTrigger> Password Strength: {password === '' ? '':passwordStrength(password)?.value} </p>   
+                                   
 
-                <ProgressBar id="progress-bar" style={{marginTop:15 + 'px'}} now={passwordScore * 25} className={getProgressColor()} />
-                <small>{`Password Strength: ${passwordScore} / 4`} - {result && (         
-                  <p>ZXCVBN Crack time: {result.crack_times_display.online_no_throttling_10_per_second}</p>               
-              )}  </small>             
-
-                                         
-          
+         <ProgressBar striped id="progress-bar" style={{marginTop:15 + 'px' }} now={passwordScore * 25} label={`${passwordScore <= 0 ? 0: passwordScore * 25}%`} />                           
           </Card.Body>
 
           <Card.Footer>
-
-          <React.Fragment>                     
-                Password strength is calculated using zxcvbn, which is a password strength estimator inspired by password crackers. 
-                 More information on zxcvbn can be found 
-                  <a href="https://github.com/dropbox/zxcvbn"><u> here</u></a>                           
-            </React.Fragment>
 
             <hr></hr>  
 
