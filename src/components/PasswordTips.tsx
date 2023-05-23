@@ -1,14 +1,12 @@
 import React from 'react';
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
+import '../styles/PasswordTips.css';
 
 const PasswordTips: React.FC = () => {
   return (
-    <Container>
-      <Row id="tips-margin-bottom-offset" className="justify-content-center align-items-center">
-        <Col xs={12} md={12} lg={12} xl={12}>
-          <Card className="mt-4">
+          <Card bg="black" className="mt-4">
             <Card.Body>
-              <Card.Title>Helpful Password Tips</Card.Title>
+              <Card.Title><h1>Helpful Password Tips</h1></Card.Title>
                 <ul>
                   <li>
                     <Card.Text>Use a combination of uppercase and lowercase letters.</Card.Text>
@@ -70,9 +68,6 @@ const PasswordTips: React.FC = () => {
                 </ul>
             </Card.Body>
           </Card>
-        </Col>
-      </Row>
-    </Container>
   );
 };
 

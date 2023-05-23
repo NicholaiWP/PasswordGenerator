@@ -22,7 +22,10 @@ const NavigationBar = () => {
           </Nav.Link>
           <Nav.Link className="left-spacing" as={Link} to="/password-tips">
             Password Tips
-          </Nav.Link>         
+          </Nav.Link>  
+          <Nav.Link className="left-spacing" as={Link} to="/test-my-password-strength">
+            Password Strength Validator
+          </Nav.Link>        
         </Nav>
       </Navbar.Collapse>
     </Navbar>
