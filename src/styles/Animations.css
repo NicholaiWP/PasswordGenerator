@@ -86,43 +86,72 @@
   }
 
 
-
-  #nav-icon3 span:nth-child(1) {
-    top: 0px;
+  .nav-icon-toggle {
+    position: relative;
+    margin-right: 10px; /* Add desired margin */
+    width: 30px;
+    height: 20px;
+    cursor: pointer;
   }
   
-  #nav-icon3 span:nth-child(2),#nav-icon3 span:nth-child(3) {
-    top: 18px;
+  .nav-icon-toggle span {
+    position: absolute;
+    height: 3px;
+    width: 100%;
+    background: #fff;
+    border-radius: 3px;
+    opacity: 1;
+    left: 0;
+    transform: rotate(0deg);
+    transition: 0.25s ease-in-out;
   }
   
-  #nav-icon3 span:nth-child(4) {
-    top: 36px;
+  .nav-icon-toggle span:nth-child(1),
+  .nav-icon-toggle span:nth-child(2),
+  .nav-icon-toggle span:nth-child(3),
+  .nav-icon-toggle span:nth-child(4) {
+    display: block;
   }
   
-  #nav-icon3.open span:nth-child(1) {
-    top: 18px;
+  .nav-icon-toggle span:nth-child(1) {
+    top: 0;
+    transition-delay: 0.1s;
+  }
+  
+  .nav-icon-toggle span:nth-child(2),
+  .nav-icon-toggle span:nth-child(3) {
+    top: 7px;
+  }
+  
+  .nav-icon-toggle span:nth-child(4) {
+    top: 14px;
+    transition-delay: 0.1s;
+  }
+  
+  .nav-icon-toggle.open span:nth-child(1) {
+    top: 7px;
     width: 0%;
     left: 50%;
   }
   
-  #nav-icon3.open span:nth-child(2) {
-    -webkit-transform: rotate(45deg);
-    -moz-transform: rotate(45deg);
-    -o-transform: rotate(45deg);
+  .nav-icon-toggle.open span:nth-child(2) {
     transform: rotate(45deg);
   }
   
-  #nav-icon3.open span:nth-child(3) {
-    -webkit-transform: rotate(-45deg);
-    -moz-transform: rotate(-45deg);
-    -o-transform: rotate(-45deg);
+  .nav-icon-toggle.open span:nth-child(3) {
     transform: rotate(-45deg);
   }
   
-  #nav-icon3.open span:nth-child(4) {
-    top: 18px;
+  .nav-icon-toggle.open span:nth-child(4) {
+    top: 7px;
     width: 0%;
     left: 50%;
+  }
+
+  @media (min-width: 992px) {
+    .nav-icon-toggle {
+      display: none; /* Hide the toggler on larger screens */
+    }
   }
   
   

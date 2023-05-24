@@ -89,10 +89,6 @@ a.left-spacing.nav-link{
   margin-left: 10px;
 }
 
-button.navbar-toggler{
-  background-color: #0d6efd;
-}
-
 .lock-image {
   transform-origin: center;
 }

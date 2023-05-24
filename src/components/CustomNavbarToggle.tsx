@@ -1,26 +1,29 @@
 import React from 'react';
-import { Navbar } from 'react-bootstrap';
-import '../styles/Animations.css'; // Import the animation styles
 
 interface CustomNavbarToggleProps {
   showNav: boolean;
   onClick: () => void;
+  className?: string;
 }
 
 const CustomNavbarToggle: React.FC<CustomNavbarToggleProps> = ({
   showNav,
   onClick,
+  className,
 }) => {
+  const toggleClassName = showNav ? 'open' : '';
+
   return (
-    <div
-      className={`nav-icon3 ${showNav ? 'open' : ''}`}
+    <button
+      className={`nav-icon-toggle ${toggleClassName} ${className}`}
       onClick={onClick}
+      aria-expanded={showNav}
     >
       <span />
       <span />
       <span />
       <span />
-    </div>
+    </button>
   );
 };
 

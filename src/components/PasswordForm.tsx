@@ -415,7 +415,7 @@ const PasswordForm = () => {
               <Form.Control
                 type="text"
                 name="special-chars"
-                placeholder="Special characters to include"
+                placeholder="Special characters to exclude"
                 value={customSpecialChars}
                 onChange={handleSpecialCharsInputChange}
               />
